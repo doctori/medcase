@@ -17,7 +17,6 @@ var cipDataFile = "./data/CIS_CIP_bdpm.txt"
 * CIS = Code Identifiant de Spécialité
  */
 type CIP struct {
-	BDPM
 	CIS                   int
 	CIP7                  int
 	Label                 string
