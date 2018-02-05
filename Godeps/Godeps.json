@@ -17,6 +17,16 @@
 			"ImportPath": "github.com/stretchr/testify/assert",
 			"Comment": "v1.2.1-2-ga726187",
 			"Rev": "a726187e3128d0a0ec37f73ca7c4d3e508e6c2e5"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"Comment": "v1.2.1-2-ga726187",
+			"Rev": "a726187e3128d0a0ec37f73ca7c4d3e508e6c2e5"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"Comment": "v1.2.1-2-ga726187",
+			"Rev": "a726187e3128d0a0ec37f73ca7c4d3e508e6c2e5"
 		}
 	]
 }

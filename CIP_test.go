@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -106,11 +109,11 @@ func TestCIP_ArrayToCIP(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "medoc_oui_with_bad_CIP",
+			name: "medoc_oui_with_bad_CIS",
 			cip:  CIP{},
 			args: args{
 				line: []string{
-					"60026494",
+					"NOTANUMBER",
 					"300075BAD3",
 					"plaquette(s) thermoformée(s) PVC PVDC aluminium de 21 comprimé(s)",
 					"Présentation active",
@@ -152,4 +155,29 @@ func TestCallArrayToCIP(t *testing.T) {
 	})
 	assert.Equal(t, 60026957, cip.CIS, "They Should be Equal")
 	assert.Equal(t, true, cip.CollectivityAgreement, "string to bool test")
+}
+func TestLoadCIP(t *testing.T) {
+	// Init the data file with a few entries
+	tmpDir, err := ioutil.TempDir(".", "testLoad")
+	assert.Nil(t, err)
+	defer os.RemoveAll(tmpDir) // clean up
+	tmpFile, err := ioutil.TempFile(tmpDir, "testLoadCIP")
+	assert.Nil(t, err)
+	defer tmpFile.Close()
+	lines := []string{
+		"65141739	5003049	1 pot(s) en verre de 6,5 g	Présentation active	Arrêt de commercialisation (le médicament n'a plus d'autorisation)	11/08/2014	3400950030497	non					",
+		"65141760	3619243	pilulier(s) polypropylène de 60  comprimé(s)	Présentation active	Déclaration d'arrêt de commercialisation	09/09/2014	3400936192430	non	30%	7,75	8,77	1,02	",
+		"65142848	3921516	plaquette(s) thermoformée(s) PVC polychlortrifluoroéthylène aluminium de 30 comprimé(s)	Présentation active	Déclaration d'arrêt de commercialisation	07/10/2017	3400939215167	non					",
+		"65142848	5745377	56 plaquette(s) thermoformée(s) PVC polychlortrifluoroéthylène aluminium de 1 comprimé(s)	Présentation active	Déclaration d'arrêt de commercialisation	31/12/2014	3400957453770	non					",
+		"65143010	3006566	plaquette(s) PVC aluminium de 30 comprimé(s)	Présentation active	Déclaration de commercialisation	19/04/2017	3400930065662	oui	65%	1,13	2,15	1,02	",
+		"65143010	3006568	plaquette(s) PVC aluminium de 90 comprimé(s)	Présentation active	Déclaration de commercialisation	22/05/2017	3400930065686	oui	65%	2,89	3,91	1,02	",
+		"65143010	3237197	plaquette(s) PVC aluminium de 50 comprimé(s) ( abrogée le 10/10/2017)	Présentation abrogée	Déclaration d'arrêt de commercialisation	24/03/2014	3400932371976	non					",
+	}
+	for _, line := range lines {
+		tmpFile.WriteString(fmt.Sprintf("%s\r\n", line))
+	}
+	CIPs, err := LoadCIP(tmpFile.Name())
+	assert.Nil(t, err)
+	assert.Equal(t, len(lines), len(CIPs))
+	assert.Equal(t, 65141739, CIPs[0].CIS)
 }

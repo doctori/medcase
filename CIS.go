@@ -1,11 +1,17 @@
 package main
 
 import (
+	"bufio"
+	"encoding/csv"
 	"fmt"
+	"io"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 )
+
+var cisDataFile = "./data/CIS_bdpm.txt"
 
 /* CIS : Code Identifiant de Spécialitées (Noms)
 * CIS = Code Identifiant de Spécialité
@@ -23,6 +29,35 @@ type CIS struct {
 	EuropeanAuthorisation string
 	Titulaires            []string
 	ExtremeMonitoring     bool
+}
+
+// Will read the CSV File on a given path
+// And convert all entries to CIS Structs
+func LoadCIS(source string) ([]CIS, error) {
+	var CISs []CIS
+	file, err := os.Open(source)
+	if err != nil {
+		err = fmt.Errorf("Could not open %s, because : %s", source, err.Error())
+		return CISs, err
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.LazyQuotes = true
+	reader.Comma = '\t'
+
+	for {
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		var cis = new(CIS)
+		err = cis.ArrayToCIS(line)
+
+		check(err)
+		CISs = append(CISs, *cis)
+
+	}
+	return CISs, err
 }
 
 /* ArrayToCIP

@@ -1,16 +1,23 @@
 package main
 
 import (
+	"bufio"
+	"encoding/csv"
 	"fmt"
+	"io"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
+var cipDataFile = "./data/CIS_CIP_bdpm.txt"
+
 /* CIP : Code Identifiant de Presentation (boites)
 * CIS = Code Identifiant de Spécialité
  */
 type CIP struct {
+	BDPM
 	CIS                   int
 	CIP7                  int
 	Label                 string
@@ -22,6 +29,33 @@ type CIP struct {
 	Remboursement         float32
 	Prices                []float32
 	RemboursementDetail   string
+}
+
+// Will read the CSV File on a given path
+// And convert all entries to CIP Structs
+func LoadCIP(source string) (CIPs []CIP, err error) {
+	file, err := os.Open(source)
+	if err != nil {
+		err = fmt.Errorf("Could not open %s, because : %s", source, err.Error())
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.LazyQuotes = true
+	reader.Comma = '\t'
+	for {
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		var cip = new(CIP)
+		err = cip.ArrayToCIP(line)
+
+		check(err)
+		CIPs = append(CIPs, *cip)
+
+	}
+	return
 }
 
 /* ArrayToCIP
