@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func Test_check(t *testing.T) {
 	type args struct {
@@ -10,7 +13,11 @@ func Test_check(t *testing.T) {
 		name string
 		args args
 	}{
-	// TODO: Add test cases.
+		{name: "dumbest_test",
+			args: args{
+				e: errors.New("this is an error"),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

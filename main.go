@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/doctori/medcase/BDPM"
 )
 
 func check(e error) {
@@ -12,9 +14,9 @@ func check(e error) {
 
 func main() {
 
-	CISs, err := LoadCIS(cisDataFile)
+	CISs, err := BDPM.LoadCIS(BDPM.CisDataFile)
 	check(err)
-	CIPs, err := LoadCIP(cipDataFile)
+	CIPs, err := BDPM.LoadCIP(BDPM.CipDataFile)
 	check(err)
-	fmt.Printf("loaded : %d entries", len(CISs)+len(CIPs))
+	fmt.Printf("loaded : %d entries\n", len(CISs)+len(CIPs))
 }

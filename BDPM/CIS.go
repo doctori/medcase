@@ -1,4 +1,4 @@
-package main
+package BDPM
 
 import (
 	"bufio"
@@ -11,7 +11,8 @@ import (
 	"time"
 )
 
-var cisDataFile = "./data/CIS_bdpm.txt"
+// Standard Location for the CIS datafile
+var CisDataFile = "./data/CIS_bdpm.txt"
 
 /* CIS : Code Identifiant de Spécialitées (Noms)
 * CIS = Code Identifiant de Spécialité
@@ -53,7 +54,9 @@ func LoadCIS(source string) ([]CIS, error) {
 		var cis = new(CIS)
 		err = cis.ArrayToCIS(line)
 
-		check(err)
+		if err != nil {
+			panic(err)
+		}
 		CISs = append(CISs, *cis)
 
 	}

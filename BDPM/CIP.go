@@ -1,4 +1,4 @@
-package main
+package BDPM
 
 import (
 	"bufio"
@@ -11,7 +11,8 @@ import (
 	"time"
 )
 
-var cipDataFile = "./data/CIS_CIP_bdpm.txt"
+// Standard Location for the CIP Datafile
+var CipDataFile = "./data/CIS_CIP_bdpm.txt"
 
 /* CIP : Code Identifiant de Presentation (boites)
 * CIS = Code Identifiant de Spécialité
@@ -50,7 +51,9 @@ func LoadCIP(source string) (CIPs []CIP, err error) {
 		var cip = new(CIP)
 		err = cip.ArrayToCIP(line)
 
-		check(err)
+		if err != nil {
+			panic(err)
+		}
 		CIPs = append(CIPs, *cip)
 
 	}
