@@ -6,7 +6,7 @@ go:
   
 script:
   # Run the unit tests suite
-  - go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+  - ./go.test.sh
 after_success:
   # Send coverage reports to Codecov
   - bash <(curl -s https://codecov.io/bash)
