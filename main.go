@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/doctori/medcase/BDPM"
 )
 
 func check(e error) {
 	if e != nil {
-		panic(e)
+		log.Panic(e)
 	}
 }
 
