@@ -62,10 +62,16 @@ func LoadCIS(source string) (CISs map[int]*CIS, err error) {
 	return CISs, err
 }
 
-/* ArrayToCIP
-* Array to cis takes an array extrated from the CSV CIS_CIP_bdpm.txt
-* and returns a cis struct
- */
+// IsNil wil return true if the CIS struct is considered Null
+func (cis *CIS) IsNil() bool {
+	if cis.Name == "" || cis.CIS == 0 {
+		return true
+	}
+	return false
+}
+
+// ArrayToCIS takes an array extrated from the CSV CIS_CIP_bdpm.txt
+// and returns a cis struct
 func (cis *CIS) ArrayToCIS(line []string) (err error) {
 	if len(line) < 11 {
 		err = fmt.Errorf("Cannot convert into cis Struct because the line contains %d elements instead of a minimum of 11", len(line)+1)

@@ -97,6 +97,40 @@ func TestCIS_ArrayToCIS(t *testing.T) {
 		})
 	}
 }
+
+func TestCIS_IsNil(t *testing.T) {
+	tests := []struct {
+		name   string
+		cis    CIS
+		rValue bool
+	}{
+		{
+			name:   "simpleNilCIS",
+			cis:    CIS{},
+			rValue: true,
+		}, {
+			name: "simpleNonNilCIS",
+			cis: CIS{
+				Name: "I'm a Medecine",
+				CIS:  33403495,
+			},
+			rValue: false,
+		}, {
+			name: "MixedWithNoCIS",
+			cis: CIS{
+				Name: "SuperMedoc2000",
+			},
+			rValue: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if ret := tt.cis.IsNil(); ret != tt.rValue {
+				t.Errorf("cis.IsNil wanted [%v] got : [%v]", tt.rValue, ret)
+			}
+		})
+	}
+}
 func TestCallArrayToCIS(t *testing.T) {
 	var cis CIS
 	cis.ArrayToCIS([]string{
@@ -142,4 +176,7 @@ func TestLoadCIS(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, len(lines), len(CISs))
 	assert.Equal(t, 62872308, CISs[62872308].CIS)
+	// Try to open bullshit files ?
+	_, err = LoadCIS("Non_Existing_File")
+	assert.NotNil(t, err)
 }

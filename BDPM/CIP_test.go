@@ -181,4 +181,7 @@ func TestLoadCIP(t *testing.T) {
 	assert.Equal(t, len(lines), len(CIPs))
 	assert.Equal(t, 65143010, CIPs[3006566].CIS)
 	assert.Equal(t, uint64(3400930065662), CIPs[3006566].CIP13)
+	// Load Bullshit file
+	_, err = LoadCIP("Not_existing_file")
+	assert.NotNil(t, err)
 }

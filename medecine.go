@@ -34,6 +34,10 @@ type Presentation struct {
 
 func (med *Medecine) loadMedecineFromBDPM(cis *BDPM.CIS, cips []BDPM.CIP) (err error) {
 	var presentations []Presentation
+	if cis.IsNil() {
+		err = fmt.Errorf("Could not Load Medecine because cis appears to be Nil : [%#v]", cis)
+		return
+	}
 	for _, cip := range cips {
 		if cis.CIS != cip.CIS {
 			err = fmt.Errorf("the CIP and CIS are diferent drugs : %d and %d", cip.CIS, cis.CIS)
