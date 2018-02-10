@@ -141,5 +141,5 @@ func TestLoadCIS(t *testing.T) {
 	CISs, err := LoadCIS(tmpFile.Name())
 	assert.Nil(t, err)
 	assert.Equal(t, len(lines), len(CISs))
-	assert.Equal(t, 62872308, CISs[0].CIS)
+	assert.Equal(t, 62872308, CISs[62872308].CIS)
 }

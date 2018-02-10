@@ -179,5 +179,6 @@ func TestLoadCIP(t *testing.T) {
 	CIPs, err := LoadCIP(tmpFile.Name())
 	assert.Nil(t, err)
 	assert.Equal(t, len(lines), len(CIPs))
-	assert.Equal(t, 65141739, CIPs[0].CIS)
+	assert.Equal(t, 65143010, CIPs[3006566].CIS)
+	assert.Equal(t, uint64(3400930065662), CIPs[3006566].CIP13)
 }

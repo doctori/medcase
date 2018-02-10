@@ -24,16 +24,16 @@ type CIP struct {
 	Status                string
 	DeclaredState         string
 	DeclaredDate          time.Time
-	CIP13                 int16
+	CIP13                 uint64
 	CollectivityAgreement bool //<== enum ?
 	Remboursement         float32
 	Prices                []float32
 	RemboursementDetail   string
 }
 
-// Will read the CSV File on a given path
+// LoadCIP Will read the CSV File on a given path
 // And convert all entries to CIP Structs
-func LoadCIP(source string) (CIPs []CIP, err error) {
+func LoadCIP(source string) (CIPs map[int]CIP, err error) {
 	file, err := os.Open(source)
 	if err != nil {
 		err = fmt.Errorf("Could not open %s, because : %s", source, err.Error())
@@ -43,6 +43,7 @@ func LoadCIP(source string) (CIPs []CIP, err error) {
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.LazyQuotes = true
 	reader.Comma = '\t'
+	CIPs = make(map[int]CIP)
 	for {
 		line, err := reader.Read()
 		if err == io.EOF {
@@ -54,7 +55,7 @@ func LoadCIP(source string) (CIPs []CIP, err error) {
 		if err != nil {
 			panic(err)
 		}
-		CIPs = append(CIPs, *cip)
+		CIPs[cip.CIP7] = *cip
 
 	}
 	return
@@ -84,8 +85,8 @@ func (cip *CIP) ArrayToCIP(line []string) (err error) {
 	if err != nil {
 		return
 	}
-	CIP13, err := strconv.ParseInt(line[6], 10, 16)
-	cip.CIP13 = int16(CIP13)
+	CIP13, err := strconv.ParseInt(line[6], 10, 64)
+	cip.CIP13 = uint64(CIP13)
 
 	cip.CollectivityAgreement = (line[7] == "oui")
 	remboursement, err := strconv.ParseFloat(strings.TrimSuffix(line[8], "%"), 32)

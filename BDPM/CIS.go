@@ -34,18 +34,17 @@ type CIS struct {
 
 // Will read the CSV File on a given path
 // And convert all entries to CIS Structs
-func LoadCIS(source string) ([]CIS, error) {
-	var CISs []CIS
+func LoadCIS(source string) (CISs map[int]*CIS, err error) {
 	file, err := os.Open(source)
 	if err != nil {
 		err = fmt.Errorf("Could not open %s, because : %s", source, err.Error())
-		return CISs, err
+		return
 	}
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.LazyQuotes = true
 	reader.Comma = '\t'
-
+	CISs = make(map[int]*CIS)
 	for {
 		line, err := reader.Read()
 		if err == io.EOF {
@@ -57,7 +56,7 @@ func LoadCIS(source string) ([]CIS, error) {
 		if err != nil {
 			panic(err)
 		}
-		CISs = append(CISs, *cis)
+		CISs[cis.CIS] = cis
 
 	}
 	return CISs, err
