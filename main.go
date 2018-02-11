@@ -8,7 +8,7 @@ import (
 
 	"github.com/doctori/medcase/BDPM"
 	"github.com/jinzhu/gorm"
-	_ "github.com/lib/pq"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 func check(e error) {
@@ -34,6 +34,8 @@ type Config struct {
 	DB DBConfig `json:"db"`
 }
 
+var db = &gorm.DB{}
+
 func main() {
 	// Load Application configuration
 	file, err := os.Open("conf/mainConfig.json")
@@ -48,7 +50,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db = initDB(config)
+	initDB(config)
+	defer db.Close()
 	CISs, err := BDPM.LoadCIS(BDPM.CisDataFile)
 	check(err)
 	CIPs, err := BDPM.LoadCIP(BDPM.CipDataFile)
@@ -81,8 +84,6 @@ func main() {
 
 }
 
-var db = &gorm.DB{}
-
 func initDB(config Config) *gorm.DB {
 	connectionString := fmt.Sprintf(
 		"user=%s password='%s' host=%s dbname=%s",
@@ -96,7 +97,7 @@ func initDB(config Config) *gorm.DB {
 	// Debug Mode
 	db.LogMode(true)
 	db.CreateTable(&Medecine{}, &Presentation{})
-	db.Model(&Medecine{}).AddUniqueIndex("medecine_uniqueness", "national_pres_long_code")
+	//	db.Model(&Medecine{}).AddUniqueIndex("medecine_uniqueness", "national_pres_long_code")
 	db.AutoMigrate(&Medecine{}, &Presentation{})
 	check(err)
 

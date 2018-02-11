@@ -4,7 +4,15 @@ go:
   - 1.9.x
   - 
   
-script:
+services:
+  - ppstgresql
+
+before_script:
+  - psql -c 'create database medcase_tests;' -U postgres
+  - psql -c 'CREATE ROLE medcase_tests WITH LOGIN PASSWORD "medcase_tests"' -U postgres
+  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE medcase_tests TO medcase_tests' -U postgres
+
+  script:
   # Run the unit tests suite
   - ./go.test.sh
 after_success:

@@ -25,8 +25,8 @@ type Presentation struct {
 	MedecineID            int
 	Label                 string
 	NationalPresShortCode int
-	NationalPresLongCode  uint64 `gorm:"primary_key"`
-	Price                 float32
+	//NationalPresLongCode  uint64 `gorm:"primary_key"`
+	Price float32
 }
 
 // We need to save this in a database !
@@ -46,7 +46,7 @@ func (med *Medecine) loadMedecineFromBDPM(cis *BDPM.CIS, cips []BDPM.CIP) (err e
 		presentations = append(presentations, Presentation{
 			Label: cip.Label,
 			NationalPresShortCode: cip.CIP7,
-			NationalPresLongCode:  cip.CIP13,
+			//			NationalPresLongCode:  cip.CIP13,
 			//Price:                 cip.Prices[0],
 		})
 	}
@@ -59,8 +59,20 @@ func (med *Medecine) loadMedecineFromBDPM(cis *BDPM.CIS, cips []BDPM.CIP) (err e
 	return
 }
 
+// IsNil will return true if the Medecine Struct is considered Null
+func (med *Medecine) IsNil() bool {
+	if med.Name == "" || med.NationalShortCode == 0 {
+		return true
+	}
+	return false
+}
+
 // Save Will save the medecine struct into the database
-func (med *Medecine) Save() Medecine {
+func (med *Medecine) Save() (Medecine, error) {
+	if med.IsNil() {
+		err := fmt.Errorf("Could not save Empty Medecine : %v", *med)
+		return *med, err
+	}
 	if db.NewRecord(med) {
 		oldMed := new(Medecine)
 		db.Where("national_short_code = ?", med.NationalShortCode).First(&oldMed)
@@ -77,7 +89,7 @@ func (med *Medecine) Save() Medecine {
 		//log.Printf("Creating Medecine %#v", med)
 		db.Save(&med)
 	}
-	return *med
+	return *med, nil
 }
 
 //GetMedByPresShortID will fetch the medecine associated with
